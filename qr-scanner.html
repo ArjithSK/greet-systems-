@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner</title>
+    <style>
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #4caf50;
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            padding: 0 15px;
+        }
+
+        h1, h2 {
+            color:black;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        h5{
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            
+        }
+
+        .section {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        #my-qr-reader {
+            padding: 20px;
+            border: 1px solid #b2b2b2;
+            border-radius: 8px;
+            max-width: 100%;
+        }
+
+        p {
+            color: rgb(14, 1, 1);
+            font-size: 20px;
+            margin-top: 15px;
+           
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #008000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+            word-break: break-all;
+            white-space: normal;
+            text-align: center;
+        }
+
+        button.stop {
+            background-color: #FF4500;
+        }
+
+        button.back {
+            background-color: #1E90FF;
+        }
+
+        button.scanned-link {
+            background-color: #4CAF50;
+            margin-bottom: 10px;
+        }
+
+        button:hover {
+            background-color: #006400;
+            transform: scale(1.05);
+        }
+
+        button.stop:hover {
+            background-color: #8B0000;
+        }
+
+        button.back:hover {
+            background-color: #0066CC;
+        }
+
+        button.scanned-link:hover {
+            background-color: #45a049;
+        }
+
+        /* Consolidated Media Queries */
+        @media screen and (max-width: 480px) {
+            .container {
+                max-width: 100%;
+                padding: 0 10px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            button, input {
+                font-size: 14px;
+            }
+
+            #my-qr-reader {
+                padding: 10px;
+            }
+
+            p {
+                font-size: 16px;
+            }
+        }
+
+        @media screen and (min-width: 481px) and (max-width: 768px) {
+            .container {
+                max-width: 90%;
+            }
+
+            .section {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            h2 {
+                font-size: 22px;
+            }
+
+            button, input {
+                font-size: 15px;
+            }
+
+            #my-qr-reader {
+                padding: 15px;
+            }
+
+            p {
+                font-size: 17px;
+            }
+        }
+
+        @media screen and (min-width: 769px) and (max-width: 1024px) {
+            .container {
+                max-width: 700px;
+            }
+
+            .section {
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            button, input {
+                font-size: 16px;
+            }
+
+            #my-qr-reader {
+                padding: 20px;
+            }
+
+            p {
+                font-size: 18px;
+            }
+        }
+
+        @media screen and (min-width: 1025px) {
+            .container {
+                max-width: 800px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>QR Code Scanner</h1>
+        
+        <div id="login-section" class="section">
+            <h2>Login</h2>
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button id="login-btn">Login</button>
+        </div>
+        
+
+        <div id="scanner-section" class="section" style="display: none;">
+            <button id="start-scan">Start Scanning</button>
+            <div id="my-qr-reader" style="display: none;"></div>
+            <button id="stop-scan" class="stop" style="display: none;">Stop Scanning</button>
+        </div>
+        
+        <div id="result-section" class="section" style="display: none;">
+            <p id="qr-result">Scan a QR Code</p>
+            <button id="qr-link" class="scanned-link" style="display: none;"></button>
+            <button id="back-to-scanner" class="back">Back to Scanner</button>
+            <a href="index.html"><button id="back-to-scanner" class="back">Go to Home </button></a>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const loginSection = document.getElementById("login-section");
+            const scannerSection = document.getElementById("scanner-section");
+            const resultSection = document.getElementById("result-section");
+            const loginBtn = document.getElementById("login-btn");
+            const startButton = document.getElementById("start-scan");
+            const stopButton = document.getElementById("stop-scan");
+            const backToScannerButton = document.getElementById("back-to-scanner");
+            const qrReader = document.getElementById("my-qr-reader");
+            const qrResult = document.getElementById("qr-result");
+            const qrLink = document.getElementById("qr-link");
+            const usernameInput = document.getElementById("username");
+            const passwordInput = document.getElementById("password");
+
+            let scanner;
+            let scannedUrl = '';
+
+            const VALID_USERNAME = "admin";
+            const VALID_PASSWORD = "1234";
+
+            loginBtn.addEventListener("click", function () {
+                const username = usernameInput.value;
+                const password = passwordInput.value;
+
+                if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+                    loginSection.style.display = "none";
+                    scannerSection.style.display = "block";
+                } else {
+                    alert("Invalid username or password");
+                    usernameInput.value = "";
+                    passwordInput.value = "";
+                }
+            });
+
+            startButton.addEventListener("click", function () {
+                startButton.style.display = "none";
+                qrReader.style.display = "block";
+                stopButton.style.display = "block";
+                qrLink.style.display = "none";
+                qrResult.innerText = "Scan a QR Code";
+                
+                scanner = new Html5Qrcode("my-qr-reader");
+                scanner.start(
+                    { facingMode: "environment" },
+                    { fps: 10, qrbox: 250 },
+                    function (decodedText) {
+                        if (isValidUrl(decodedText)) {
+                            scannedUrl = decodedText;
+                            qrResult.innerText = "Scanned URL Link !";
+                            qrLink.innerText = "Open: " + scannedUrl;
+                            qrLink.style.display = "block";
+                        } else {
+                            qrResult.innerText = "Scanned: " + decodedText;
+                        }
+                        
+                        console.log("Scanned QR Code:", decodedText);
+                        stopScanner();
+                        
+                        scannerSection.style.display = "none";
+                        resultSection.style.display = "block";
+                    },
+                    function (errorMessage) {
+                        console.log("QR Code scanning error:", errorMessage);
+                    }
+                ).catch(err => {
+                    console.error("Camera initialization failed:", err);
+                    resetScannerUI();
+                });
+            });
+
+            qrLink.addEventListener("click", function() {
+                if (scannedUrl) {
+                    window.open(scannedUrl, '_blank');
+                }
+            });
+
+            backToScannerButton.addEventListener("click", function() {
+                resultSection.style.display = "none";
+                scannerSection.style.display = "block";
+                qrLink.style.display = "none";
+                qrResult.innerText = "Scan a QR Code";
+            });
+
+            stopButton.addEventListener("click", stopScanner);
+
+            function stopScanner() {
+                if (scanner) {
+                    scanner.stop().then(() => {
+                        resetScannerUI();
+                    }).catch(err => {
+                        console.log("Stop failed: ", err);
+                        resetScannerUI();
+                    });
+                }
+            }
+
+            function resetScannerUI() {
+                qrReader.style.display = "none";
+                startButton.style.display = "block";
+                stopButton.style.display = "none";
+            }
+
+            function isValidUrl(string) {
+                try {
+                    new URL(string);
+                    return true;
+                } catch {
+                    return false;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

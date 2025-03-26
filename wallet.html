@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4caf50;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #45a049;
+        }
+
+        /* Custom button hover and focus states */
+        .btn-green {
+            background-color: #4caf50;
+            transition: all 0.3s ease;
+        }
+        .btn-green:hover {
+            background-color: #45a049;
+            transform: scale(1.02);
+        }
+        .btn-green:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.5);
+        }
+
+        /* Subtle animation for balance box */
+        @keyframes balanceReveal {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #balanceBox {
+            animation: balanceReveal 0.5s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-white min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-green-100 overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-[#4caf50] to-green-600 text-white p-6 text-center">
+            <h1 class="text-2xl font-bold flex items-center justify-center">
+                <i class="fas fa-wallet mr-3"></i> Wallet Tracker
+            </h1>
+        </div>
+
+        <!-- Balance Display -->
+        <div id="balanceBox" class="bg-[#4caf50] text-white text-center py-6 px-4">
+            <p class="text-lg font-medium opacity-80 mb-2">Current Balance</p>
+            <p id="balanceDisplay" class="text-4xl font-bold tracking-wider">₹0.00</p>
+        </div>
+
+        <!-- Add Money Section -->
+        <div class="p-6">
+            <div class="flex shadow-md rounded-lg overflow-hidden mb-6">
+                <input 
+                    type="number" 
+                    id="moneyInput" 
+                    placeholder="Enter amount" 
+                    class="flex-grow p-3 border-2 border-green-200 focus:border-[#4caf50] focus:ring-2 focus:ring-[#4caf50] transition-all duration-300"
+                >
+                <button 
+                    id="addMoneyBtn" 
+                    class="btn-green text-white px-5 py-3 flex items-center justify-center transition-all duration-300"
+                >
+                    <i class="fas fa-plus mr-2"></i> Add
+                </button>
+            </div>
+
+            <!-- Notes Section -->
+            <div>
+                <div class="flex mb-4 shadow-md rounded-lg overflow-hidden">
+                    <input 
+                        type="text" 
+                        id="noteInput" 
+                        placeholder="Add a wallet note" 
+                        class="flex-grow p-3 border-2 border-green-200 focus:border-[#4caf50] focus:ring-2 focus:ring-[#4caf50] transition-all duration-300"
+                    >
+                    <button 
+                        id="addNoteBtn" 
+                        class="btn-green text-white px-5 py-3 flex items-center justify-center transition-all duration-300"
+                    >
+                        <i class="fas fa-sticky-note mr-2"></i> Note
+                    </button>
+                </div>
+
+                <!-- Notes List -->
+                <div id="notesList" class="max-h-64 overflow-y-auto border border-green-100 rounded-lg"></div>
+
+                <!-- Reset Button -->
+                <button id="resetWallet" class="text-red-500 mt-4 block w-full text-center hover:text-red-700 transition-all">
+                    <i class="fas fa-trash mr-2"></i> Reset Wallet
+                </button>
+                <a href="index.html "><button id="resetWallet" class="text-red-500 mt-4 block w-full text-center hover:text-red-700 transition-all">
+                     Back
+                </button></a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements
+            const balanceDisplay = document.getElementById('balanceDisplay');
+            const moneyInput = document.getElementById('moneyInput');
+            const addMoneyBtn = document.getElementById('addMoneyBtn');
+            const noteInput = document.getElementById('noteInput');
+            const addNoteBtn = document.getElementById('addNoteBtn');
+            const notesList = document.getElementById('notesList');
+            const resetWalletBtn = document.getElementById('resetWallet');
+
+            // Initialize wallet data
+            let balance = 0;
+            let notes = [];
+
+            // Load data from local storage
+            const loadData = () => {
+                const savedBalance = localStorage.getItem('walletBalance');
+                const savedNotes = localStorage.getItem('walletNotes');
+
+                if (savedBalance) {
+                    balance = parseFloat(savedBalance);
+                    balanceDisplay.textContent = `₹${balance.toFixed(2)}`;
+                }
+
+                if (savedNotes) {
+                    notes = JSON.parse(savedNotes);
+                    renderNotes();
+                }
+            };
+
+            // Save data to local storage
+            const saveData = () => {
+                localStorage.setItem('walletBalance', balance.toString());
+                localStorage.setItem('walletNotes', JSON.stringify(notes));
+            };
+
+            // Render notes list
+            const renderNotes = () => {
+                notesList.innerHTML = notes.length > 0 
+                    ? notes.map((note, index) => `
+                        <div class="flex justify-between items-center p-3 border-b border-green-100 last:border-b-0 hover:bg-green-50 transition-colors duration-200">
+                            <div class="flex-grow mr-3">
+                                <p class="text-sm text-gray-800 font-medium">${note.text}</p>
+                                <p class="text-xs text-gray-500">${note.timestamp}</p>
+                            </div>
+                            <button 
+                                onclick="deleteNote(${index})" 
+                                class="text-red-500 hover:text-red-700 hover:scale-110 transition-all duration-200"
+                            >
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    `).join('') 
+                    : '<p class="text-center text-gray-500 p-4 text-sm">No wallet notes yet</p>';
+            };
+
+            // Add money functionality
+            addMoneyBtn.addEventListener('click', () => {
+                const amount = parseFloat(moneyInput.value);
+                if (!isNaN(amount) && amount > 0) {
+                    balance += amount;
+                    balanceDisplay.textContent = `₹${balance.toFixed(2)}`;
+                    moneyInput.value = '';
+                    moneyInput.focus();
+                    saveData();
+                } else {
+                    alert('Please enter a valid positive amount');
+                }
+            });
+
+            // Add note functionality
+            addNoteBtn.addEventListener('click', () => {
+                const noteText = noteInput.value.trim();
+                if (noteText) {
+                    notes.push({ text: noteText, timestamp: new Date().toLocaleString() });
+                    noteInput.value = '';
+                    noteInput.focus();
+                    renderNotes();
+                    saveData();
+                }
+            });
+
+            // Delete note
+            window.deleteNote = (index) => {
+                notes.splice(index, 1);
+                renderNotes();
+                saveData();
+            };
+
+            // Reset wallet
+            resetWalletBtn.addEventListener('click', () => {
+                if (confirm('Are you sure you want to reset your wallet?')) {
+                    balance = 0;
+                    notes = [];
+                    balanceDisplay.textContent = `₹0.00`;
+                    renderNotes();
+                    saveData();
+                }
+            });
+
+            // Load data on page load
+            loadData();
+        });
+    </script>
+</body>
+</html>

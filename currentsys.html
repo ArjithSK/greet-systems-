@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Greet - Current System</title>
+    <style>
+        :root {
+            --primary-green: #4caf50;
+            --light-green: #81c784;
+            --dark-green: #388e3c;
+            --white: #ffffff;
+            --black: #000000;
+            --light-gray: #f5f5f5;
+            --medium-gray: #e0e0e0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--light-gray);
+            margin: 0;
+            padding: 20px;
+            color: var(--black);
+        }
+
+        .current-system-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        .current-system-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .current-system-title {
+            color: var(--primary-green);
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        .system-details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .system-detail-card {
+            background-color: var(--light-gray);
+            border-radius: 6px;
+            padding: 20px;
+            border: 1px solid var(--medium-gray);
+        }
+
+        .system-detail-label {
+            font-weight: 600;
+            color: var(--black);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .system-detail-value {
+            font-size: 1.1rem;
+            color: var(--primary-green);
+        }
+
+        .edit-system-btn {
+            background-color: var(--primary-green);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 600;
+        }
+
+        .edit-system-btn:hover {
+            background-color: var(--dark-green);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .system-details-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Modal styles for editing system */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            margin: 15% auto;
+            padding: 30px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            color: var(--black);
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-form {
+            display: grid;
+            gap: 15px;
+        }
+
+        .modal-form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-form-group label {
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .modal-form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--medium-gray);
+            border-radius: 4px;
+        }
+
+        .modal-save-btn {
+            background-color: var(--primary-green);
+            color: var(--white);
+            border: none;
+            padding: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 600;
+        }
+
+        .modal-save-btn:hover {
+            background-color: var(--dark-green);
+        }
+    </style>
+</head>
+<body>
+    <!-- Current System Page -->
+    <div id="current-system-page" class="current-system-container">
+        <div class="current-system-header">
+            <h2 class="current-system-title">Current System Details</h2>
+            <button class="edit-system-btn" id="edit-system-btn">Edit System</button>
+        </div>
+
+        <div class="system-details-grid">
+            <div class="system-detail-card">
+                <span class="system-detail-label">System Name</span>
+                <div class="system-detail-value" id="system-name">Crop Monitoring</div>
+            </div>
+            <div class="system-detail-card">
+                <span class="system-detail-label">System Type</span>
+                <div class="system-detail-value" id="system-type">Cloud Computing</div>
+            </div>
+            <div class="system-detail-card">
+                <span class="system-detail-label">Total Servers</span>
+                <div class="system-detail-value" id="total-servers">24</div>
+            </div>
+            <div class="system-detail-card">
+                <span class="system-detail-label">Processing Power</span>
+                <div class="system-detail-value" id="processing-power">384 vCPUs</div>
+            </div>
+            <div class="system-detail-card">
+                <span class="system-detail-label">Crop Type</span>
+                <div class="system-detail-value" id="storage-capacity">Fruits and Vegetables </div>
+            </div>
+            <div class="system-detail-card">
+                <span class="system-detail-label">Last Updated</span>
+                <div class="system-detail-value" id="last-updated">March 26, 2025</div>
+            </div>
+        </div>
+    </div>
+    <a href="index.html"><button class="edit-system-btn" id="edit-system-btn">Back</button></a>
+
+    <!-- Edit System Modal -->
+    <div id="edit-system-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit System Details</h3>
+                <span class="modal-close" id="modal-close">&times;</span>
+            </div>
+            <form id="edit-system-form" class="modal-form">
+                <div class="modal-form-group">
+                    <label for="edit-system-name">System Name</label>
+                    <input type="text" id="edit-system-name" class="modal-form-control" required>
+                </div>
+                <div class="modal-form-group">
+                    <label for="edit-system-type">System Type</label>
+                    <input type="text" id="edit-system-type" class="modal-form-control" required>
+                </div>
+                <div class="modal-form-group">
+                    <label for="edit-total-servers">Total Servers</label>
+                    <input type="number" id="edit-total-servers" class="modal-form-control" required>
+                </div>
+                <div class="modal-form-group">
+                    <label for="edit-processing-power">Processing Power</label>
+                    <input type="text" id="edit-processing-power" class="modal-form-control" required>
+                </div>
+                <div class="modal-form-group">
+                    <label for="edit-storage-capacity">Storage Capacity</label>
+                    <input type="text" id="edit-storage-capacity" class="modal-form-control" required>
+                </div>
+                <button type="submit" class="modal-save-btn">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements for Current System Page
+        const editSystemBtn = document.getElementById('edit-system-btn');
+        const editSystemModal = document.getElementById('edit-system-modal');
+        const modalClose = document.getElementById('modal-close');
+        const editSystemForm = document.getElementById('edit-system-form');
+
+        // System Detail Elements
+        const systemNameEl = document.getElementById('system-name');
+        const systemTypeEl = document.getElementById('system-type');
+        const totalServersEl = document.getElementById('total-servers');
+        const processingPowerEl = document.getElementById('processing-power');
+        const storageCapacityEl = document.getElementById('storage-capacity');
+        const lastUpdatedEl = document.getElementById('last-updated');
+
+        // Edit Form Inputs
+        const editSystemNameInput = document.getElementById('edit-system-name');
+        const editSystemTypeInput = document.getElementById('edit-system-type');
+        const editTotalServersInput = document.getElementById('edit-total-servers');
+        const editProcessingPowerInput = document.getElementById('edit-processing-power');
+        const editStorageCapacityInput = document.getElementById('edit-storage-capacity');
+
+        // Open Edit Modal
+        editSystemBtn.addEventListener('click', () => {
+            // Populate form with current values
+            editSystemNameInput.value = systemNameEl.textContent;
+            editSystemTypeInput.value = systemTypeEl.textContent;
+            editTotalServersInput.value = totalServersEl.textContent.replace(/\D/g, '');
+            editProcessingPowerInput.value = processingPowerEl.textContent;
+            editStorageCapacityInput.value = storageCapacityEl.textContent;
+
+            editSystemModal.style.display = 'block';
+        });
+
+        // Close Modal
+        modalClose.addEventListener('click', () => {
+            editSystemModal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (event) => {
+            if (event.target === editSystemModal) {
+                editSystemModal.style.display = 'none';
+            }
+        });
+
+        // Handle Form Submission
+        editSystemForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Update displayed values
+            systemNameEl.textContent = editSystemNameInput.value;
+            systemTypeEl.textContent = editSystemTypeInput.value;
+            totalServersEl.textContent = editTotalServersInput.value;
+            processingPowerEl.textContent = editProcessingPowerInput.value;
+            storageCapacityEl.textContent = editStorageCapacityInput.value;
+
+            // Update last updated date
+            const currentDate = new Date().toLocaleDateString('en-US', {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric'
+            });
+            lastUpdatedEl.textContent = currentDate;
+
+            // Save to localStorage (optional persistent storage)
+            const systemData = {
+                name: editSystemNameInput.value,
+                type: editSystemTypeInput.value,
+                servers: editTotalServersInput.value,
+                processingPower: editProcessingPowerInput.value,
+                storageCapacity: editStorageCapacityInput.value,
+                lastUpdated: currentDate
+            };
+            localStorage.setItem('currentSystemData', JSON.stringify(systemData));
+
+            // Close modal
+            editSystemModal.style.display = 'none';
+        });
+
+        // Load saved system data on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedSystemData = localStorage.getItem('currentSystemData');
+            if (savedSystemData) {
+                const systemData = JSON.parse(savedSystemData);
+                
+                systemNameEl.textContent = systemData.name;
+                systemTypeEl.textContent = systemData.type;
+                totalServersEl.textContent = systemData.servers;
+                processingPowerEl.textContent = systemData.processingPower;
+                storageCapacityEl.textContent = systemData.storageCapacity;
+                lastUpdatedEl.textContent = systemData.lastUpdated;
+            }
+        });
+    </script>
+</body>
+</html>

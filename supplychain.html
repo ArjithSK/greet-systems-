@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain Supply Chain Tracker</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: white;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #4caf50;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .tracking-button, .back-button {
+            background-color: white;
+            color: #4caf50;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            margin: 10px 0;
+        }
+
+        .tracking-button:hover, .back-button:hover {
+            background-color: #e0e0e0;
+            transform: scale(1.05);
+        }
+
+        #supplyChainInfo {
+            background-color: white;
+            color: #4caf50;
+            border-radius: 5px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .stage {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #e8f5e9;
+            border-radius: 5px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <a class="container" id="mainPage">
+        <h1 style="color: white;">Blockchain Supply Chain Tracker</h1>
+        <button class="tracking-button" onclick="trackSupplyChain()">
+            Track Product Journey
+        </button>
+        
+        
+    </div>
+    
+
+    <div class="container hidden" id="supplyChainPage">
+        <h1 style="color: white;">Blockchain Supply Chain Details</h1>
+        <div id="supplyChainInfo">
+            <h2>Product Supply Chain Details</h2>
+            <div id="stages"></div>
+            <div class="button-container">
+                <button class="back-button" onclick="goBack()">
+                    Back to Home
+                </button>
+            </div>
+        </div>
+    </div>
+    <a href="index.html"><button class="tracking-button" onclick="trackSupplyChain()">
+        Back
+    </button></a>
+
+    <script>
+        function trackSupplyChain() {
+            const supplyChainStages = [
+                {
+                    stage: "Farmer",
+                    details: {
+                        name: "Green Valley Farms",
+                        location: "Maharashtra, India",
+                        productType: "Organic Wheat",
+                        harvestDate: "2024-03-15",
+                        blockchainTransactionId: "0x1A2B3C4D5E6F7G8H"
+                    }
+                },
+                {
+                    stage: "Dealer",
+                    details: {
+                        name: "AgriTrade Exports",
+                        location: "Mumbai, Maharashtra",
+                        procurementDate: "2024-03-20",
+                        quantity: "500 kg",
+                        blockchainTransactionId: "0x2B3C4D5E6F7G8H9I"
+                    }
+                },
+                {
+                    stage: "Sub Dealer",
+                    details: {
+                        name: "Regional Agricultural Distributor",
+                        location: "Pune, Maharashtra",
+                        distributionDate: "2024-03-25",
+                        quantity: "250 kg",
+                        blockchainTransactionId: "0x3C4D5E6F7G8H9I0J"
+                    }
+                },
+                {
+                    stage: "Shop",
+                    details: {
+                        name: "Organic Grocers",
+                        location: "Bangalore, Karnataka",
+                        arrivalDate: "2024-03-30",
+                        availableQuantity: "200 kg",
+                        blockchainTransactionId: "0x4D5E6F7G8H9I0J1K"
+                    }
+                }
+            ];
+
+            const stagesContainer = document.getElementById('stages');
+            const mainPage = document.getElementById('mainPage');
+            const supplyChainPage = document.getElementById('supplyChainPage');
+
+            // Clear previous content
+            stagesContainer.innerHTML = '';
+
+            // Populate supply chain stages
+            supplyChainStages.forEach((stageData) => {
+                const stageElement = document.createElement('div');
+                stageElement.classList.add('stage');
+
+                let detailsHTML = `<strong>${stageData.stage}</strong><br>`;
+                for (const [key, value] of Object.entries(stageData.details)) {
+                    detailsHTML += `<strong>${key.charAt(0).toUpperCase() + key.slice(1)}:</strong> ${value}<br>`;
+                }
+
+                stageElement.innerHTML = detailsHTML;
+                stagesContainer.appendChild(stageElement);
+            });
+
+            // Switch to supply chain page
+            mainPage.classList.add('hidden');
+            supplyChainPage.classList.remove('hidden');
+        }
+
+        function goBack() {
+            const mainPage = document.getElementById('mainPage');
+            const supplyChainPage = document.getElementById('supplyChainPage');
+
+            // Switch back to main page
+            supplyChainPage.classList.add('hidden');
+            mainPage.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
